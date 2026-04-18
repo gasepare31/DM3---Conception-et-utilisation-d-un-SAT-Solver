@@ -112,6 +112,12 @@ let from_file (filename: string) : formule =
 	let s = read_lines f in
 	parse s
 
+let rec compte_ops (f : formule) : int = 
+  match f with
+  | And (f1, f2) -> 1 + compte_ops f1 + compte_ops f2
+  | Or (f1, f2) -> 1 + compte_ops f1 + compte_ops f2
+  | Not f1 -> 1 + compte_ops f1
+
 let test_parse () =
 	assert (parse "a | (b & ~c)" = Or(Var "a", And(Var "b", Not (Var "c"))));
   assert (parse "~(a | (b & n))" = Not (Or (Var "a", And (Var "b", Var "n"))));
@@ -123,11 +129,15 @@ let test_parse () =
   try (let _ = parse "(a | b" in failwith "erreur") with | _ -> () ;
 	print_string "Tests OK\n";;
 
-
+let test_from_file () = 
+  assert (from_file "tests/test1.txt" = Or (Var "a", And (Var "b", Not (Var "c"))));
+  assert (from_file "tests/test2.txt" = And (Top, Bot));
+  try (let _ = from_file "tests/test3.txt" in failwith "erreur" ) with _ -> () 
 
 let test () = 
   assert (1=1);
   test_parse();
+  test_from_file();
   print_string "Tous les tests ont réussi\n"
 
 let main () = 
