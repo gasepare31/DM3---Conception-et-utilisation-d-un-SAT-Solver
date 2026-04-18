@@ -1,0 +1,2 @@
+Q1 -  On remarque que le commande à crée 3 fichier : "satsolver", "satsolver.cmi" et "satsolver.cmo". 
+      L'éxecution de la commande "./satsolver" à généré un message d'erreur : Fatal error: exception Invalid_argument("index out of bounds")
