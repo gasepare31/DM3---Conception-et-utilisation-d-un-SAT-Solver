@@ -136,7 +136,7 @@ let rec form_to_list (f : formule) : string list =
   | And (f1, f2) -> union (form_to_list f1) (form_to_list f2)
   | Or (f1, f2) -> union (form_to_list f1) (form_to_list f2)
   | Not f1 -> form_to_list f1
-  | Var (x) -> x 
+  | Var (x) -> [x]
   | _ -> []
 
 let test_tri_et_doublon () = 
