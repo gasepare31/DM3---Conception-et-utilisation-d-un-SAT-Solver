@@ -119,7 +119,7 @@ let test_parse () =
   assert (parse "a = b" = equivalence(Var "a", Var "b"));
   assert (parse "a | b & c" = Or(Var "a", And(Var "b", Var "c")));
   assert (parse "a | b & c = d > e" = implique( equivalence( Or(Var "a", And(Var "b", Var "c")), Var "d"), Var "e"));
-  try (let _ = parse "a & & b" in failwith "erreur") with | Erreur_syntaxe -> () | _ -> failwith "Erreur_test";
+  try (let _ = parse "a & & b" in failwith "erreur") with | Erreur_syntaxe -> () | _ -> failwith "Erreur_test";;
   try (let _ = parse "(a | b" in failwith "erreur") with | _ -> () ;
 	print_string "Tests OK\n";;
 
