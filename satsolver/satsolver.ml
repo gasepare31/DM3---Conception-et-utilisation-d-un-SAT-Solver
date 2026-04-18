@@ -117,6 +117,37 @@ let rec compte_ops (f : formule) : int =
   | And (f1, f2) -> 1 + compte_ops f1 + compte_ops f2
   | Or (f1, f2) -> 1 + compte_ops f1 + compte_ops f2
   | Not f1 -> 1 + compte_ops f1
+  | _ -> 0
+
+let rec tri_et_doublon (l : 'a list) : bool = 
+  match l with 
+  | a :: b :: q -> if ((a<b) && (tri_et_doublon (b :: q) = true)) then true else false 
+  | a :: [] -> true
+  | [] -> true
+
+let rec union (l1 : 'a list) (l2: 'a list) : 'a list = 
+  match l1, l2 with
+  | a :: q, b :: k -> if (a < b) then (a :: union q l2) else if (a = b) then b :: union q k else b :: union l1 k
+  | [], l2 -> l2
+  | l1, [] -> l1
+
+let rec form_to_list (f : formule) : string list = 
+  match f with
+  | And (f1, f2) -> union (form_to_list f1) (form_to_list f2)
+  | Or (f1, f2) -> union (form_to_list f1) (form_to_list f2)
+  | Not f1 -> form_to_list f1
+  | Var (x) -> x 
+  | _ -> []
+
+let test_tri_et_doublon () = 
+  assert (tri_et_doublon [1;2;3;4;5] = true);
+  assert (tri_et_doublon [1;2;3;4;4] = false);
+  assert (tri_et_doublon [1;2;1;4;5] = false)
+
+let test_compte_ops() =
+  assert (compte_ops( parse "A | B | C | (D | E)") = 4);
+  assert (compte_ops( parse "A & B & C & (D & E)") = 4);
+  assert (compte_ops( parse "~(A & B) & (~C) & (D & E)") = 6)
 
 let test_parse () =
 	assert (parse "a | (b & ~c)" = Or(Var "a", And(Var "b", Not (Var "c"))));
