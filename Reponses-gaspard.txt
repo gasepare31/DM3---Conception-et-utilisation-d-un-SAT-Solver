@@ -1,2 +1,4 @@
 Q1 -  On remarque que le commande à crée 3 fichier : "satsolver", "satsolver.cmi" et "satsolver.cmo" et que l'exécution de "./satsolver coucou" affiche 2 (le nombre d'arguments) et l'arguemnt (ici coucou). 
-      L'éxecution de la commande "./satsolver" à généré un message d'erreur : Fatal error: exception Invalid_argument("index out of bounds")
+L'éxecution de la commande "./satsolver" à généré un message d'erreur : Fatal error: exception Invalid_argument("index out of bounds")
+
+Q10 - La fonction union est en O(n1 + n2) avec n1 et n2 les tailles des deux listes. La fonction de la question 9 est en compléxité O(n^2) avec n le nombre de noeuds. La situation pire cas correspond à une structure de peinge par exemple : And(Var "x1", And(Var "x2", ...)). Dans le cas d'un arbre équilibré, la complexité récurrente est de C(n)=2C(n/2)+Θ(n) ce qui fait une compléxité de O(n*log(n)). Pour palier à ce problème on pourait utiliser des dictionnaires pour stoker les variables déjà vues.
