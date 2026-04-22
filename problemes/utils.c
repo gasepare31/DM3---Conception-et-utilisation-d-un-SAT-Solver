@@ -81,8 +81,8 @@ void test () {
     assert(strcmp(res4, "(foo|bar|baz|qux)") == 0);
     free(res4);
 
-    char* arr1[] = {"a", "b"};
-    char* res1 = au_plus_une(arr1, 2);
+    char* arr5[] = {"a", "b"};
+    char* res5 = au_plus_une(arr5, 2);
     assert(strcmp(res1, "((~a|~b))") == 0);
     free(res1);
 }
