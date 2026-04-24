@@ -1,0 +1,1 @@
+Q25) Compter combien de fois chaque variable apparaît, et choisir celle qui apparaît le plus.

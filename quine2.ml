@@ -73,17 +73,51 @@ let rec algorithme_quine (f: formule): sat_result =
   |Top -> Some []                        
   |Bot -> None
   |_ ->        
-        let x = choix_var f in     
-        match x with
-        |None -> Some []                     
-        |Some x ->
-            let f1 = simpl_full (subst f x Top) in
-            begin match algorithme_quine f1 with
-            |Some v -> Some ((x, true) :: v)  
-            |None ->
-                let f2 = simpl_full (subst f x Bot) in
-                begin match algorithme_quine f2 with
-                |Some v -> Some ((x, false) :: v)
-                |None -> None              
-            end
-        end
+    let x = choix_var f in
+    match x with
+    |None -> Some []                     
+    |Some x ->
+      let f1 = simpl_full (subst f x Top) in
+      match algorithme_quine f1 with
+      |Some v -> Some ((x, true) :: v)  
+      |None ->
+        let f2 = simpl_full (subst f x Bot) in
+        match algorithme_quine f2 with
+        |Some v -> Some ((x,false) :: v)
+        |None -> None              
+
+(*affiche les variables vraies dans la valuation*)
+let rec print_true (v : valuation) : unit =
+  match v with
+  |[] -> ()
+  |(x,true) :: r ->
+      print_endline x;
+      print_true r
+  |(_,false) :: r -> print_true r
+
+let solve_affichage (f: formule): unit =
+  match quine f with
+  |None -> print_endline "La formule est insatisfiable."
+  |Some v -> 
+    print_endline "La formule est satisfiable en assignant 1 aux variables suivantes et 0 aux autres:";
+    print_true v
+
+(*choix de la variable la plus frequente : *)
+let rec choix_var_count (f: formule): (string*int) option =
+  match f with
+  |Var x -> Some (x, 1)
+  |Top |Bot -> None
+  |Not a -> choix_var_count a
+  |And(a,b) | Or(a,b) ->
+      let ca = choix_var_count a in
+      let cb = choix_var_count b in
+      match ca, cb with
+      |None, None -> None
+      |Some x, None -> Some x
+      |None, Some y -> Some y
+      |Some (xa,na), Some (xb,nb) -> if na >= nb then Some (xa,na) else Some (xb,nb)
+
+let choix_var_mieux (f: formule): string option =
+  match choix_var_count f with
+  |None -> None
+  |Some (x,_) -> Some x
