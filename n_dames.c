@@ -142,6 +142,21 @@ void gen_formule_n_dames(int n, char* filename) {
     fclose(f);
 }
 
-int main(){
-  return 0;
+
+//j'avoue que ca je comprends pas trop faudra revoir :(
+int main(int argc, char** argv) {
+    if (argc != 2) {
+        printf("Usage: %s <n>\n", argv[0]);
+        return 1;
+    }
+    int n = atoi(argv[1]);
+    if (n <= 0) {
+        printf("Erreur : n doit être un entier positif.\n");
+        return 1;
+    }
+    char filename[64];
+    sprintf(filename, "formule_%d_dames.txt", n);
+    gen_formule_n_dames(n, filename);
+    printf("Formule générée dans le fichier : %s\n", filename);
+    return 0;
 }
