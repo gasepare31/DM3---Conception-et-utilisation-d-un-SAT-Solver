@@ -96,7 +96,7 @@ let rec print_true (v : valuation) : unit =
   |(_,false) :: r -> print_true r
 
 let solve_affichage (f: formule): unit =
-  match quine f with
+  match algorithme_quine f with
   |None -> print_endline "La formule est insatisfiable."
   |Some v -> 
     print_endline "La formule est satisfiable en assignant 1 aux variables suivantes et 0 aux autres:";
