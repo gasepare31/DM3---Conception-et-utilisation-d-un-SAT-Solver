@@ -67,13 +67,33 @@ let rec choix_var (f: formule): string option=
   |Not a -> choix_var a
   |Top |Bot -> None
 
+(*choix de la variable la plus frequente : *)
+let rec choix_var_count (f: formule): (string*int) option =
+  match f with
+  |Var x -> Some (x, 1)
+  |Top |Bot -> None
+  |Not a -> choix_var_count a
+  |And(a,b) | Or(a,b) ->
+      let ca = choix_var_count a in
+      let cb = choix_var_count b in
+      match ca, cb with
+      |None, None -> None
+      |Some x, None -> Some x
+      |None, Some y -> Some y
+      |Some (xa,na), Some (xb,nb) -> if na >= nb then Some (xa,na) else Some (xb,nb)
+
+let choix_var_mieux (f: formule): string option =
+  match choix_var_count f with
+  |None -> None
+  |Some (x,_) -> Some x
+
 let rec algorithme_quine (f: formule): sat_result =
   let f = simpl_full f in
   match f with
   |Top -> Some []                        
   |Bot -> None
   |_ ->        
-    let x = choix_var f in
+    let x = choix_var_mieux f in
     match x with
     |None -> Some []                     
     |Some x ->
@@ -101,23 +121,3 @@ let solve_affichage (f: formule): unit =
   |Some v -> 
     print_endline "La formule est satisfiable en assignant 1 aux variables suivantes et 0 aux autres:";
     print_true v
-
-(*choix de la variable la plus frequente : *)
-let rec choix_var_count (f: formule): (string*int) option =
-  match f with
-  |Var x -> Some (x, 1)
-  |Top |Bot -> None
-  |Not a -> choix_var_count a
-  |And(a,b) | Or(a,b) ->
-      let ca = choix_var_count a in
-      let cb = choix_var_count b in
-      match ca, cb with
-      |None, None -> None
-      |Some x, None -> Some x
-      |None, Some y -> Some y
-      |Some (xa,na), Some (xb,nb) -> if na >= nb then Some (xa,na) else Some (xb,nb)
-
-let choix_var_mieux (f: formule): string option =
-  match choix_var_count f with
-  |None -> None
-  |Some (x,_) -> Some x

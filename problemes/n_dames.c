@@ -2,7 +2,7 @@
 #include <stdlib.h>
 #include <stdbool.h>
 #include <string.h>
-//#include <utils.h>
+#include "utils.h"
 
 
 //renvoie la chaine de caractères X_[i]_[j]
@@ -43,7 +43,7 @@ char* contrainte_toutes_lignes (int n){
 }
 
 /*au plus une reine par colonne*/
-char* contrainte_une_colonne (int i, int n){
+char* contrainte_une_colonne (int j, int n){
     char** tabvar = malloc(n* sizeof(char*));
     for(int i=0 ; i<n ;i++){
         tabvar[i]=variable (i, j);
