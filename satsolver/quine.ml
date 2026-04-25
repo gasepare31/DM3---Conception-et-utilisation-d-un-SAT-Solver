@@ -83,24 +83,41 @@ let choix_var_mieux (f: formule): string option =
   |None -> None
   |Some (x,_) -> Some x
 
+(* enlève les doublons en gardant la première occurrence *)
+let rec remove_duplicates v =
+  match v with
+  |[] -> []
+  |(x,b)::q ->
+    let q2 = List.filter (fun (y,_) -> y <> x) q in (x,b) :: remove_duplicates q2
+
+let sort_valuation v =
+  List.sort (fun (x,_) (y,_) -> compare x y) v
+
+(* vérifie si une formule est entièrement vraie *)
+let rec is_true_formula f =
+  match f with
+  | Top -> true
+  | Bot -> false
+  | Var _ -> false
+  | Not f1 -> not (is_true_formula f1)
+  | And(f1,f2) -> is_true_formula f1 && is_true_formula f2
+  | Or(f1,f2) -> is_true_formula f1 || is_true_formula f2
+
 let rec algorithme_quine (f: formule): sat_result =
   let f = simpl_full f in
-  match f with
-  |Top -> Some []                        
-  |Bot -> None
-  |_ ->        
-    let x = choix_var_mieux f in
+  if is_true_formula f then Some []
+  else if f = Bot then None
+  else
+    let x = choix_var f in
     match x with
-    |None -> Some []                     
-    |Some x ->
-      let f1 = simpl_full (subst f x Top) in
-      match algorithme_quine f1 with
-      |Some v -> Some ((x, true) :: v)  
-      |None ->
-        let f2 = simpl_full (subst f x Bot) in
-        match algorithme_quine f2 with
-        |Some v -> Some ((x,false) :: v)
-        |None -> None              
+    |None -> None
+    |Some y ->
+    match algorithme_quine (simpl_full (subst f y Top)) with
+    |Some v -> let v = (y,true)::v in Some (sort_valuation (remove_duplicates v))
+    |None -> 
+      match algorithme_quine (simpl_full (subst f y Bot)) with
+      |Some v -> let v = (y,false)::v in Some (sort_valuation (remove_duplicates v))
+      |None -> None              
 
 (*affiche les variables vraies dans la valuation*)
 let rec print_true (v : valuation) : unit =
