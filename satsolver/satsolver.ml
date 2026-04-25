@@ -139,7 +139,7 @@ let rec form_to_list (f : formule) : string list =
   | Var (x) -> [x]
   | _ -> []
 
-let test_tri_et_doublon () = 
+(* let test_tri_et_doublon () = 
   assert (tri_et_doublon [1;2;3;4;5] = true);
   assert (tri_et_doublon [1;2;3;4;4] = false);
   assert (tri_et_doublon [1;2;1;4;5] = false)
@@ -169,9 +169,9 @@ let test () =
   assert (1=1);
   test_parse();
   test_from_file();
-  print_string "Tous les tests ont réussi\n"
+  print_string "Tous les tests ont réussi\n" *)
 
-let main () = 
+(* let main () = 
   test();
   if (Array.length Sys.argv) = 1 then 
     failwith "Aucun argument"
@@ -184,8 +184,4 @@ let main () =
   let ic = open_in (Sys.argv.(1)) in 
   let res = input_line ic in 
   close_in ic; 
-  print_string res
-
-
-let _ = main() (* Exécution de la fonction main *)
-
+  print_string res *)

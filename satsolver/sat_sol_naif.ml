@@ -70,6 +70,3 @@ let salsolver_naif (f : formule) : sat_result =
       v := valuation_next vv
   done;
   !res
-
-
-
