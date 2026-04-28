@@ -1,0 +1,12 @@
+Auvergne-Rhone-Alpes:Bourgogne-Franche-Comte,Centre-Val-de-Loire,Ile-de-France,Nouvelle-Aquitaine,Occitanie,Provence-Alpes-Cote-d-Azur
+Bourgogne-Franche-Comte:Auvergne-Rhone-Alpes,Centre-Val-de-Loire,Grand-Est,Ile-de-France
+Centre-Val-de-Loire:Auvergne-Rhone-Alpes,Bourgogne-Franche-Comte,Bretagne,Hauts-de-France,Ile-de-France,Normandie,Nouvelle-Aquitaine,Pays-de-la-Loire
+Grand-Est:Bourgogne-Franche-Comte,Hauts-de-France,Ile-de-France
+Hauts-de-France:Centre-Val-de-Loire,Grand-Est,Ile-de-France,Normandie
+Ile-de-France:Bourgogne-Franche-Comte,Centre-Val-de-Loire,Grand-Est,Hauts-de-France,Normandie
+Normandie:Centre-Val-de-Loire,Hauts-de-France,Ile-de-France,Pays-de-la-Loire,Bretagne
+Bretagne:Centre-Val-de-Loire,Normandie,Pays-de-la-Loire
+Pays-de-la-Loire:Bretagne,Centre-Val-de-Loire,Normandie,Nouvelle-Aquitaine
+Nouvelle-Aquitaine:Auvergne-Rhone-Alpes,Centre-Val-de-Loire,Occitanie,Pays-de-la-Loire
+Occitanie:Auvergne-Rhone-Alpes,Nouvelle-Aquitaine,Provence-Alpes-Cote-d-Azur
+Provence-Alpes-Cote-d-Azur:Auvergne-Rhone-Alpes,Occitanie
