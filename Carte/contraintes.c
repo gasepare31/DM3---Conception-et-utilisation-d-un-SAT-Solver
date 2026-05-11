@@ -6,31 +6,52 @@
 #include "contraintes.h"
 
 /*la liste des régions est au format NOM:VOISIN1,VOISIN2 donc on
-lit jusqu'au double point, le n sert a stocker la taille */
-char** lire_regions(char* filename, int* n){
-    char** liste = malloc (200*sizeof(char*));
+lit jusqu'au double point, le n sert a stocker*/
+char** lire_regions(char* filename, int* n) {
+    char** liste = malloc(200 * sizeof(char*));
     FILE* f = fopen(filename, "r");
-    *n=0;
+    if (!f) {
+        perror("lire_regions: fopen");
+        exit(1);
+    }
+
+    *n = 0;
     int reg;
-    char nom[100];
-    int taille =0;
-    while ((reg =fgetc(f))!= EOF) {
-        if (reg== ':'){ //c la fin du nom
-            nom[taille]= '\0';
-            liste[*n]=malloc(taille + 1);
+    char nom[256];   // buffer large pour les noms longs
+    int taille = 0;
+
+    while ((reg = fgetc(f)) != EOF) {
+        if (reg == ':') {
+            // fin du nom de la région
+            nom[taille] = '\0';
+            liste[*n] = malloc(strlen(nom) + 1);
             strcpy(liste[*n], nom);
             (*n)++;
-            taille=0;
-            //après on ignore les voisins
-            while ((reg =fgetc(f))!= EOF && reg != '\n');
+            taille = 0;
+
+            // ignorer les voisins jusqu'à la fin de la ligne
+            while ((reg = fgetc(f)) != EOF && reg != '\n');
         }
-        else { //on stock le nom de la région 
-            nom[taille]=reg;
-            taille++;
+        else if (reg == '\n') {
+            // ligne vide → on ignore
+            taille = 0;
+        }
+        else {
+            // on ajoute le caractère au nom
+            nom[taille++] = reg;
         }
     }
+
+    // ⚠️ indispensable : ajouter la dernière région si pas de '\n'
+    if (taille > 0) {
+        nom[taille] = '\0';
+        liste[*n] = malloc(strlen(nom) + 1);
+        strcpy(liste[*n], nom);
+        (*n)++;
+    }
+
     fclose(f);
-    return liste ;
+    return liste;
 }
 
 /* Cherche le nom `cible` dans `regions` et renvoie son indice,
@@ -219,9 +240,9 @@ char* contrainte_adjacence(char* r1, char* r2, int nb_couleurs) {
     char* tmp = malloc(taille);
     buffer[0] = '\0';
 
-    for (int i = 0; i < nb_couleurs; i++) {
+    for (int i = 1; i <= nb_couleurs; i++) {
         sprintf(tmp, "~(R_%s_%d & R_%s_%d)", r1, i, r2, i);
-        if (i > 0) strcat(buffer, " & ");
+        if (i > 1) strcat(buffer, " & ");
         strcat(buffer, tmp);
     }
 
@@ -244,9 +265,11 @@ char* toutes_contraintes_regions(char** regions, int n, int nb_couleurs) {
         char* au_plus  = contrainte_au_plus_une_couleur(regions[i], nb_couleurs);
 
         if (i > 0) strcat(contrainte, " & ");
+        strcat(contrainte, "(");
         strcat(contrainte, au_moins);
         strcat(contrainte, " & ");
         strcat(contrainte, au_plus);
+        strcat(contrainte, ")");
         free(au_moins);
         free(au_plus);
     }
@@ -266,7 +289,9 @@ char* toutes_contraintes_adjacences(int** adjacences, char** regions, int m, int
     for (int i = 0; i < m; i++) {
         char* cont = contrainte_adjacence(regions[adjacences[i][0]], regions[adjacences[i][1]], nb_couleurs);
         if (i > 0) strcat(contrainte, " & ");
+        strcat(contrainte, "(");
         strcat(contrainte, cont);
+        strcat(contrainte, ")");
         free(cont);
     }
     return contrainte;
@@ -282,9 +307,11 @@ void gen_formule_coloriage(char** regions, int n, int** adj, int m, int nb_coule
     char* formule = malloc(taille);
     formule[0] = '\0';
 
+    strcat(formule, "(");
     strcat(formule, contraintes_regions);
-    strcat(formule, " & ");
+    strcat(formule, ") & (");
     strcat(formule, contraintes_adjacences);
+    strcat(formule, ")");
 
     // Écriture dans le fichier
     FILE* f = fopen(filename, "w");
@@ -298,7 +325,6 @@ void gen_formule_coloriage(char** regions, int n, int** adj, int m, int nb_coule
     free(contraintes_adjacences);
     free(formule);
 }
-
 
 void afficher_coloriage(char* fichier_valuation, char** regions, int n) {
     FILE* f = fopen(fichier_valuation, "r");
@@ -318,7 +344,7 @@ void afficher_coloriage(char* fichier_valuation, char** regions, int n) {
         char region[150];
         int k;
 
-        if (sscanf(var, "R_%[^_]_%d]", region, &k) == 2) {
+        if (sscanf(var, "R_%[^_]_%d", region, &k) == 2) {
             // retrouver l’indice de la région
             for (int i = 0; i < n; i++) {
                 if (strcmp(regions[i], region) == 0) {

@@ -33,7 +33,7 @@ int main(int argc, char* argv[]) {
     system("/tmp/solver /tmp/formule.txt > /tmp/valuation.txt");
 
     // Affichage du coloriage
-    afficher_coloriage("valuation.txt", regions, n);
+    afficher_coloriage("/tmp/valuation.txt", regions, n);
 
     return 0;
 }
