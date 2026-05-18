@@ -24,6 +24,11 @@ char** lire_regions(char* filename, int* n) {
         if (reg == ':') {
             // fin du nom de la région
             nom[taille] = '\0';
+
+            for (int k = 0; nom[k]; k++){
+                if (nom[k] == '-') nom[k] = '_';
+            }
+
             liste[*n] = malloc(strlen(nom) + 1);
             strcpy(liste[*n], nom);
             (*n)++;
@@ -42,7 +47,7 @@ char** lire_regions(char* filename, int* n) {
         }
     }
 
-    // ⚠️ indispensable : ajouter la dernière région si pas de '\n'
+    // indispensable : ajouter la dernière région si pas de '\n'
     if (taille > 0) {
         nom[taille] = '\0';
         liste[*n] = malloc(strlen(nom) + 1);
@@ -79,42 +84,52 @@ int** lire_adjacences(char* filename, int* m){
    int ind=0;
    int region_courante = -1; //indice de region a gauche du :
 
+   while ((reg = fgetc(f)) != EOF) {
 
-   while ((reg =fgetc(f))!= EOF) {
-        if (reg== ':'){ //on a lu le nom de og region
-            tamp[ind]= '\0';
-            ind=0;
-            //indice de la region courante avec la fonction d'avant
-            region_courante =chercher_region(regions, nb_regions, tamp);
+        if (reg == ':'){ 
+            // on a lu le nom de la région
+            tamp[ind] = '\0';
+            ind = 0;
 
+            // indice de la region courante avec la fonction d'avant
+            region_courante = chercher_region(regions, nb_regions, tamp);
         }
-        else if (reg== ',' || reg=='\n'){
-            if (ind>0){
-                tamp[ind]= '\0';
+
+        else if (reg == ',' || reg == '\n'){
+            // fin d'un voisin
+            if (ind > 0){
+                tamp[ind] = '\0';
                 int voisin = chercher_region(regions, nb_regions, tamp);
-                ind=0;
+                ind = 0;
 
-                //on n'ajoute la pair que si a<b pour éviter les douxblonds
-
+                // on n'ajoute la pair que si a<b pour éviter les doublons
                 if (region_courante != -1 && voisin != -1
-                    && region_courante< voisin) {
+                    && region_courante < voisin) {
+
                         liste[*m] = malloc(2*sizeof(int));
-                        liste[*m][0]= region_courante;
-                        liste[*m][1]= voisin;
+                        liste[*m][0] = region_courante;
+                        liste[*m][1] = voisin;
                         (*m)++;
-                    }
+                }
+            }
+
+            // si fin de ligne: plus de région courante
+            if (reg == '\n') {
+                region_courante = -1;
             }
         }
-        if (reg=='\n') { region_courante= -1 ;}
-        
-    else {
-        tamp[ind]=reg;
-        ind++;
-    }
+
+        else {
+            // on ajoute le caractère au tampon
+            tamp[ind] = reg;
+            ind++;
+        }
+   }
+
+   fclose(f);
+   return liste;
 }
-fclose(f);
-return liste ;
-}
+
 
 
 /*génère "R_'region'_'couleur'" avec la couleur un chiffre"*/
@@ -230,9 +245,6 @@ char* contrainte_au_plus_une_couleur(char* region, int nb_couleurs){
     return clause;
 }
 
-
-
-
 char* contrainte_adjacence(char* r1, char* r2, int nb_couleurs) {
     // Taille estimée par clause : ~(R_[r1]_[i] & R_[r2]_[i]) & ...
     int taille = nb_couleurs * (strlen(r1) + strlen(r2) + 40) + 1;
@@ -297,6 +309,8 @@ char* toutes_contraintes_adjacences(int** adjacences, char** regions, int m, int
     return contrainte;
 }
 
+
+
 void gen_formule_coloriage(char** regions, int n, int** adj, int m, int nb_couleurs, char* filename) {
     // Génération des deux blocs de contraintes
     char* contraintes_regions    = toutes_contraintes_regions(regions, n, nb_couleurs);
@@ -341,13 +355,16 @@ void afficher_coloriage(char* fichier_valuation, char** regions, int n) {
 
     while (fscanf(f, "%s", var) == 1) {
         // var = R_[Nom]_[k]
-        char region[150];
-        int k;
 
-        if (sscanf(var, "R_%[^_]_%d", region, &k) == 2) {
+        char* last = strrchr(var, '_');  // dernier underscore
+        if (last) {
+            int k = atoi(last + 1);      // couleur
+            *last = '\0';                // coupe après le nom
+            char* region_name = var + 2; // saute "R_"
+
             // retrouver l’indice de la région
             for (int i = 0; i < n; i++) {
-                if (strcmp(regions[i], region) == 0) {
+                if (strcmp(regions[i], region_name) == 0) {
                     couleur_region[i] = k;
                 }
             }

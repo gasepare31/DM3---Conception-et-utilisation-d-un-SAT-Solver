@@ -24,16 +24,14 @@ int main(int argc, char* argv[]) {
     gen_formule_coloriage(regions, n, adj, m, nb_couleurs, fichier_formule);
 
     printf("Formule générée dans %s\n", fichier_formule);
-
-    char cmd1[512];
-    sprintf(cmd1, "cp %s /tmp/formule.txt", fichier_formule);
-    system(cmd1);
     
     // Appel du solver OCaml
-    system("/tmp/solver /tmp/formule.txt > /tmp/valuation.txt");
+    char cmd[512];
+    sprintf(cmd, "./solver %s > valuation.txt", fichier_formule);
+    system(cmd);
 
     // Affichage du coloriage
-    afficher_coloriage("/tmp/valuation.txt", regions, n);
+    afficher_coloriage("valuation.txt", regions, n);
 
     return 0;
 }

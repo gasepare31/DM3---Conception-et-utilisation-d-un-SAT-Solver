@@ -1,0 +1,13 @@
+La formule est satisfiable en assignant 1 aux variables suivantes et 0 aux autres:
+R_Auvergne_Rhone_Alpes_1
+R_Bourgogne_Franche_Comte_1
+R_Bretagne_2
+R_Centre_Val_de_Loire_1
+R_Grand_Est_1
+R_Hauts_de_France_1
+R_Ile_de_France_1
+R_Normandie_1
+R_Nouvelle_Aquitaine_1
+R_Occitanie_1
+R_Pays_de_la_Loire_1
+R_Provence_Alpes_Cote_d_Azur_1
