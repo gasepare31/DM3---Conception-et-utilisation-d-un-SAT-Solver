@@ -1,0 +1,18 @@
+# macOS
+.DS_Store
+
+# OCaml / compilation
+*.cmi
+*.cmx
+*.cmo
+*.o
+*.a
+*.annot
+*.byte
+*.native
+satsolver
+solver
+Carte/solver
+
+# C
+*.out
