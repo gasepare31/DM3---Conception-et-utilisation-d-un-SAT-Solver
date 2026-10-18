@@ -22,23 +22,9 @@ La structure détaillée et les recommandations de rangement sont dans [docs/str
 
 ## Compilation
 
-Le dépôt ne fournit pas encore de système de build standardisé. Les commandes peuvent donc dépendre de l'installation OCaml locale.
-
 Pour explorer le solveur principal :
 
     ocamlc -o satsolver satsolver.ml
     ./satsolver
 
 Si le programme attend des entrées ou arguments spécifiques, consulter son code source avant l'exécution.
-
-## Branches
-
-La branche de référence est main. Les branches A_RENDRE, juju et zozo sont conservées telles quelles ; aucune branche n'est supprimée dans ce nettoyage.
-
-## État du dépôt
-
-Les artefacts déjà présents, notamment les exécutables et .DS_Store, ne sont pas supprimés rétroactivement. Le fichier .gitignore évite leur réintroduction.
-
-## Licence
-
-Aucune licence n'est actuellement déclarée.
